@@ -98,6 +98,14 @@ class TotpMethods(unittest.TestCase):
         # this test might be flaky on time window edges;
         # better practice would be to mock time source and test with that
 
+    def test_generate_various_code(self):
+        first_secret = "aaaaaaaaaaaaaaaaaaaa"
+        second_secret = "bbbbbbbbbbbbbbbbbbbb"
+
+        first_code = generate_code(first_secret)
+        second_code = generate_code(second_secret)
+
+        self.assertNotEqual(first_code, second_code)
 
 if __name__ == '__main__':
     unittest.main()
