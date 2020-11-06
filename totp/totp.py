@@ -35,7 +35,7 @@ def generate_code(secret: str,
 
     code = str(seconds_since_the_epoch)
 
-    hash = hashlib.sha256(code.encode()).hexdigest()
+    hash = hashlib.sha256(code.encode() + secret.encode()).hexdigest()
 
     b58 = base58.b58decode_int(base58.b58encode(hash))
 
