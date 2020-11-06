@@ -1,5 +1,9 @@
 import time
+import hashlib
+import uuid
+import base58
 from typing import Optional
+
 
 # totp time window in seconds
 # would go to a config in a real microservice
@@ -9,7 +13,8 @@ time_window = 15
 
 def generate_secret() -> str:
     """Returns a random 20-symbol base58 string"""
-    return "abcdeabcdeabcdeabcd" + str(int(time.time_ns()) % 9)
+    secret_bytes = uuid.uuid4().bytes
+    return base58.b58encode(secret_bytes).decode()[:20]
 
 
 def generate_code(secret: str,
@@ -28,9 +33,13 @@ def generate_code(secret: str,
         seconds_since_the_epoch = int(time.time())
     seconds_since_the_epoch = int(seconds_since_the_epoch // time_window)
 
-    code = str(seconds_since_the_epoch)[-4:]
+    code = str(seconds_since_the_epoch)
 
-    return code
+    hash = hashlib.sha256(code.encode()).hexdigest()
+
+    b58 = base58.b58decode_int(base58.b58encode(hash))
+
+    return str(b58)[-4:]
 
 
 def check_code(secret: str, code: str,
